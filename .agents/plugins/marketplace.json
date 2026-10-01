@@ -1,0 +1,32 @@
+{
+  "name": "ai-infra-local",
+  "interface": {
+    "displayName": "AI Infra Local"
+  },
+  "plugins": [
+    {
+      "name": "context-hub-skill",
+      "source": {
+        "source": "local",
+        "path": "./apps/context-skill"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "context-hub-hooks",
+      "source": {
+        "source": "local",
+        "path": "./apps/context-hooks"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

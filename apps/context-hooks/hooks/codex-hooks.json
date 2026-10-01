@@ -1,0 +1,29 @@
+{
+  "description": "Upload completed Codex sessions to Context Hub.",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${PLUGIN_ROOT}/hooks/session_end.py --provider codex",
+            "timeout": 10,
+            "statusMessage": "Checkpointing AI session"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${PLUGIN_ROOT}/hooks/session_end.py --provider codex",
+            "timeout": 3,
+            "statusMessage": "Archiving AI session"
+          }
+        ]
+      }
+    ]
+  }
+}

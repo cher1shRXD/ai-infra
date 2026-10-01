@@ -1,0 +1,60 @@
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_DB: context
+      POSTGRES_USER: context
+      POSTGRES_PASSWORD: context
+    restart: unless-stopped
+    volumes:
+      - context-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U context -d context"]
+      interval: 2s
+      timeout: 2s
+      retries: 20
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  api:
+    build: ./apps/context-api
+    environment:
+      CONTEXT_DATABASE_URL: postgresql://context:context@db:5432/context
+      CONTEXT_OLLAMA_URL: http://host.docker.internal:11434
+      CONTEXT_EMBEDDING_MODEL: qwen3-embedding:0.6b
+      CONTEXT_BOOTSTRAP_API_KEY: ${CONTEXT_BOOTSTRAP_API_KEY:?run make setup first}
+      CONTEXT_BOOTSTRAP_TENANT: ${CONTEXT_BOOTSTRAP_TENANT:-local}
+      CONTEXT_BOOTSTRAP_PRINCIPAL: ${CONTEXT_BOOTSTRAP_PRINCIPAL:-local-developer}
+      CONTEXT_BOOTSTRAP_PROJECTS: ${CONTEXT_BOOTSTRAP_PROJECTS:-*}
+      CONTEXT_SESSION_RETENTION_DAYS: ${CONTEXT_SESSION_RETENTION_DAYS:-90}
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/healthz', timeout=2)",
+        ]
+      interval: 2s
+      timeout: 3s
+      retries: 20
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  context-data:

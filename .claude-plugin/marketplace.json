@@ -1,0 +1,19 @@
+{
+  "name": "ai-infra-local",
+  "description": "Internal Context Hub plugins for Codex and Claude Code.",
+  "owner": {
+    "name": "Internal AI Infrastructure"
+  },
+  "plugins": [
+    {
+      "name": "context-hub-hooks",
+      "source": "./apps/context-hooks",
+      "description": "Archive and classify local AI project sessions."
+    },
+    {
+      "name": "context-hub-skill",
+      "source": "./apps/context-skill",
+      "description": "Read and write durable shared project context."
+    }
+  ]
+}

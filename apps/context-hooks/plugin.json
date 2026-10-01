@@ -1,0 +1,11 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "context-hub-hooks",
+  "version": "0.5.0",
+  "description": "Archive and classify completed Codex sessions in Context Hub.",
+  "extensions": {
+    "com.openai": {
+      "hooks": "./hooks/codex-hooks.json"
+    }
+  }
+}

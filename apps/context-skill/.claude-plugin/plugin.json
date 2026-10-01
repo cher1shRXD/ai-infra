@@ -1,0 +1,7 @@
+{
+  "name": "context-hub-skill",
+  "displayName": "Context Hub Skill",
+  "version": "0.4.0",
+  "description": "Read and write durable project context through Context Hub.",
+  "author": {"name": "Internal AI Infrastructure"}
+}

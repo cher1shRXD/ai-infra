@@ -1,0 +1,29 @@
+{
+  "description": "Upload completed Claude Code sessions to Context Hub.",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/session_end.py", "--provider", "claude"],
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/session_end.py", "--provider", "claude"],
+            "timeout": 3
+          }
+        ]
+      }
+    ]
+  }
+}
