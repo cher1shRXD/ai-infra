@@ -2,11 +2,10 @@
 """Dependency-free Context Hub client for shared agent skills."""
 
 import argparse
-import getpass
 import json
 import os
 from pathlib import Path
-import pwd
+import socket
 import sys
 from typing import Dict, Optional
 from urllib.error import HTTPError, URLError
@@ -14,10 +13,6 @@ from urllib.request import Request, urlopen
 
 
 DEFAULT_URL = "http://interns-Mac-mini-2.local:8000"
-
-
-def local_user() -> str:
-    return pwd.getpwuid(os.getuid()).pw_gecos.split(",", 1)[0] or getpass.getuser()
 
 
 def config_path() -> Path:
@@ -38,12 +33,14 @@ def credentials() -> tuple[str, str]:
     values = config()
     url = (os.getenv("CONTEXT_HUB_URL") or values.get("url") or DEFAULT_URL).rstrip("/")
     api_key = os.getenv("CONTEXT_HUB_API_KEY") or values.get("api_key")
-    if api_key:
+    if api_key and (os.getenv("CONTEXT_HUB_API_KEY") or values.get("agent_id")):
         return url, api_key
-    user = os.getenv("CONTEXT_HUB_USER") or values.get("user") or local_user()
+    principal = os.getenv(
+        "CONTEXT_HUB_AGENT_ID", f"context-agent:{socket.gethostname()}"
+    )
     request = Request(
         url + "/v1/register",
-        data=json.dumps({"principal": user}).encode(),
+        data=json.dumps({"principal": principal}).encode(),
         headers={"Content-Type": "application/json"},
         method="POST",
     )
@@ -58,7 +55,7 @@ def credentials() -> tuple[str, str]:
                 "api_key": issued["api_key"],
                 "key_id": issued["id"],
                 "project_id": "general",
-                "user": user,
+                "agent_id": principal,
             },
             indent=2,
         )
@@ -114,9 +111,11 @@ def add_memory_fields(parser: argparse.ArgumentParser) -> None:
 
 
 def memory_payload(args: argparse.Namespace) -> dict:
-    performed_by = args.performed_by or [
-        os.getenv("CONTEXT_HUB_USER") or config().get("user") or local_user()
-    ]
+    if not args.performed_by:
+        raise RuntimeError(
+            "--performed-by is required; ask the user who did the work before recording it"
+        )
+    performed_by = args.performed_by
     return {
         "project_id": project(),
         "namespace": args.namespace,

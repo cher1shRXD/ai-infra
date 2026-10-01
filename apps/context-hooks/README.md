@@ -29,4 +29,4 @@
 - Claude Code: `.claude-plugin/plugin.json` + `hooks/hooks.json`
 - 공통 collector: `hooks/session_end.py`
 
-자동 발급된 설정은 `~/.context-hub/config.json`에 저장된다.
+자동 발급된 설정은 `~/.context-hub/config.json`에 저장된다. Hook의 API 주체는 컴퓨터 계정명이 아니라 `context-agent:<hostname>` 형식의 에이전트 식별자다. 사람 이름은 Skill이 대화에서 확인해 memory node의 `performed_by`에 기록한다.

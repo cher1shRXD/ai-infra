@@ -229,7 +229,7 @@ class EndToEndTests(unittest.TestCase):
             auto_env = {
                 **env,
                 "CONTEXT_HUB_CONFIG": str(auto_config),
-                "CONTEXT_HUB_USER": "자동등록 사용자",
+                "CONTEXT_HUB_AGENT_ID": "context-agent-test",
             }
             auto_env.pop("CONTEXT_HUB_API_KEY")
             subprocess.run(
@@ -245,7 +245,7 @@ class EndToEndTests(unittest.TestCase):
                 check=True,
             )
             auto_values = json.loads(auto_config.read_text())
-            self.assertEqual(auto_values["user"], "자동등록 사용자")
+            self.assertEqual(auto_values["agent_id"], "context-agent-test")
             self.created_keys.append(auto_values["key_id"])
         cli = subprocess.run(
             [
@@ -285,7 +285,7 @@ class EndToEndTests(unittest.TestCase):
             transcript_path.write_text(transcript)
             hook_env = {**env, "PLUGIN_DATA": hook_data}
             hook_env["CONTEXT_HUB_CONFIG"] = str(Path(hook_data) / "config.json")
-            hook_env["CONTEXT_HUB_USER"] = "Hook 자동등록 사용자"
+            hook_env["CONTEXT_HUB_AGENT_ID"] = "context-agent-hook-test"
             hook_env.pop("CONTEXT_HUB_API_KEY")
             hook = subprocess.run(
                 [
@@ -311,7 +311,7 @@ class EndToEndTests(unittest.TestCase):
             self.assertEqual(hook.stdout, "")
             self.assertEqual(list((Path(hook_data) / "session-outbox").glob("*.json")), [])
             hook_config = json.loads((Path(hook_data) / "config.json").read_text())
-            self.assertEqual(hook_config["user"], "Hook 자동등록 사용자")
+            self.assertEqual(hook_config["agent_id"], "context-agent-hook-test")
             self.created_keys.append(hook_config["key_id"])
 
         status, session = request(

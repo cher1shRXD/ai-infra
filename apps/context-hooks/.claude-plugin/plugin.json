@@ -1,7 +1,7 @@
 {
   "name": "context-hub-hooks",
   "displayName": "Context Hub Hooks",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Archive and classify completed Claude Code sessions in Context Hub.",
   "author": {"name": "Internal AI Infrastructure"}
 }

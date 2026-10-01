@@ -41,9 +41,29 @@ claude plugin install context-hub-skill@ai-infra-local --scope user
 claude plugin install context-hub-hooks@ai-infra-local --scope user
 ```
 
-첫 실행 때 플러그인이 서버를 찾아 자동 등록하고 `~/.context-hub/config.json`에 발급된 키를 저장한다. 작업자 이름은 회사 컴퓨터의 macOS 사용자 이름을 사용한다. 이후 새 세션부터 자동으로 API에 보고한다.
+첫 실행 때 플러그인이 서버를 찾아 자동 등록하고 `~/.context-hub/config.json`에 발급된 키를 저장한다. `performed_by`는 AI가 대화에서 확인한 실제 작업자 이름을 사용한다. 모르면 AI가 먼저 사용자에게 물어본다. 컴퓨터 계정명은 작업자 이름으로 사용하지 않는다.
 
 두 컴퓨터는 같은 사내 네트워크나 회사 VPN에 있어야 한다. 이 API를 인터넷에 직접 공개하지 않는다.
+
+## 다른 컴퓨터의 플러그인 업데이트
+
+GitHub marketplace를 새로 고친 뒤 플러그인을 다시 설치한다.
+
+```bash
+# Codex
+codex plugin marketplace upgrade ai-infra-local
+codex plugin remove context-hub-skill@ai-infra-local
+codex plugin remove context-hub-hooks@ai-infra-local
+codex plugin add context-hub-skill@ai-infra-local
+codex plugin add context-hub-hooks@ai-infra-local
+
+# Claude Code
+claude plugin marketplace update ai-infra-local
+claude plugin update context-hub-skill@ai-infra-local --scope user
+claude plugin update context-hub-hooks@ai-infra-local --scope user
+```
+
+업데이트 후 Codex와 Claude Code를 재시작한다.
 
 ## 동작
 

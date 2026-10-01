@@ -4,13 +4,12 @@
 from __future__ import annotations
 
 import argparse
-import getpass
 import hashlib
 import json
 import os
 from pathlib import Path
-import pwd
 import re
+import socket
 import sys
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
@@ -32,10 +31,6 @@ SECRET_PATTERNS = (
         "[REDACTED_PRIVATE_KEY]",
     ),
 )
-
-
-def local_user() -> str:
-    return pwd.getpwuid(os.getuid()).pw_gecos.split(",", 1)[0] or getpass.getuser()
 
 
 def redact(text: str) -> str:
@@ -70,11 +65,13 @@ def client_config() -> tuple[str, str | None]:
         except (OSError, json.JSONDecodeError):
             pass
     url = (url or DEFAULT_URL).rstrip("/")
-    if not api_key:
-        user = os.getenv("CONTEXT_HUB_USER") or config.get("user") or local_user()
+    if not api_key or not config.get("agent_id"):
+        principal = os.getenv(
+            "CONTEXT_HUB_AGENT_ID", f"context-agent:{socket.gethostname()}"
+        )
         request = Request(
             url + "/v1/register",
-            data=json.dumps({"principal": user}).encode(),
+            data=json.dumps({"principal": principal}).encode(),
             headers={"Content-Type": "application/json"},
             method="POST",
         )
@@ -89,7 +86,7 @@ def client_config() -> tuple[str, str | None]:
                         "api_key": issued["api_key"],
                         "key_id": issued["id"],
                         "project_id": "general",
-                        "user": user,
+                        "agent_id": principal,
                     },
                     indent=2,
                 )

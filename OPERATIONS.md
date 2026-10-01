@@ -14,6 +14,8 @@ make status
 
 Skill과 Hook 플러그인을 설치하고 Codex 또는 Claude Code를 새로 시작한다. 첫 Hook/Skill 호출 때 `http://interns-Mac-mini-2.local:8000`으로 자동 등록된다. 별도 URL, key, 사용자 설정은 없다.
 
+작업자 이름은 AI가 대화에서 확인한 값을 `performed_by`로 기록한다. 모르면 AI가 사용자에게 먼저 묻는다. 컴퓨터 계정명은 사용하지 않는다.
+
 ## 확인
 
 ```bash
